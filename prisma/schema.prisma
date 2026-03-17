@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String   @unique
+  password  String
+  role      Role     @default(VISITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  evaluations ExerciseEvaluation[]
+  attendances EventAttendance[]
+  trainingRequests PersonalizedTrainingRequest[]
+}
+
+enum Role {
+  ADMIN
+  VISITOR
+}
+
+model Exercise {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  videoUrl    String?  // 10s video from Cloudinary
+  imageUrls   String[] // Array of image URLs from Cloudinary
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  evaluations ExerciseEvaluation[]
+}
+
+model ExerciseEvaluation {
+  id         String   @id @default(uuid())
+  rating     Int      // 1 to 5
+  reason     String?  // Required if rating < 5
+  userId     String
+  exerciseId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, exerciseId]) // O usuário avalia o exercício apenas uma vez (ou altera)
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  date        DateTime
+  imageUrls   String[]
+  isCancelled Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attendances EventAttendance[]
+}
+
+model EventAttendance {
+  id        String           @id @default(uuid())
+  userId    String
+  eventId   String
+  status    AttendanceStatus
+  createdAt DateTime         @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId]) 
+}
+
+enum AttendanceStatus {
+  GOING
+  NOT_GOING
+  MAYBE
+}
+
+model Contact {
+  id          String      @id @default(uuid())
+  networkName String      // "WhatsApp", "Facebook", "Instagram", "Youtube"
+  type        ContactType // Enum para facilitar o icone na UI
+  value       String      // Phone number or URL
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum ContactType {
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+  YOUTUBE
+  OTHER
+}
+
+model PersonalizedTrainingRequest {
+  id              String   @id @default(uuid())
+  userId          String
+  fullName        String
+  age             Int
+  height          Float
+  weight          Float
+  physicalProblem String?
+  status          RequestStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises       PersonalizedExercise[]
+}
+
+model PersonalizedExercise {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  videoUrl    String?  // 10s video from Cloudinary
+  imageUrl    String?  // 1 photo from Cloudinary
+  requestId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  request     PersonalizedTrainingRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  executions  PersonalizedExerciseExecution[]
+}
+
+model PersonalizedExerciseExecution {
+  id           String   @id @default(uuid())
+  exerciseId   String
+  completed    Boolean
+  feedback     String?  // "Falta de tempo", "Ainda não vi", "Muito difícil"
+  createdAt    DateTime @default(now())
+
+  exercise     PersonalizedExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+
+datasource db {
+  provider = "postgresql"
+}
