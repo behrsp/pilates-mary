@@ -10,6 +10,12 @@ interface PersonalizedExercise {
   description: string;
   videoUrl: string | null;
   imageUrl: string | null;
+  executions?: {
+    id: string;
+    completed: boolean;
+    feedback: string | null;
+    createdAt: Date | string;
+  }[];
 }
 
 interface ManageExercisesModalProps {

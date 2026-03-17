@@ -73,6 +73,18 @@ export async function deletePersonalizedExercise(id: string) {
   }
 }
 
+export async function updateRequestStatus(id: string, status: string) {
+  try {
+    const session = await getSession();
+    if (session?.role !== 'ADMIN') {
+      return { error: 'Não autorizado.' };
+    }
+
+    await prisma.personalizedTrainingRequest.update({
+      where: { id },
+      data: { status: status as any },
+    });
+
     revalidatePath('/admin/training-requests');
     return { success: true };
   } catch (error) {

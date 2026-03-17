@@ -5,7 +5,7 @@ import { decrypt, updateSession } from '@/lib/session';
 const protectedRoutes = ['/admin', '/dashboard'];
 const publicRoutes = ['/login', '/register', '/'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
   
