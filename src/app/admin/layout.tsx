@@ -25,7 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const pendingTrainingRequestsCount = await prisma.personalizedTrainingRequest.count({
     where: { 
-      status: 'PENDING'
+      isAdminViewed: false
     }
   });
 

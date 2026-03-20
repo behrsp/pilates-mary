@@ -2,6 +2,7 @@ import { Users, Phone, Calendar as CalendarIcon } from 'lucide-react';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import UserRow from './UserRow';
 
 export default async function AdminUsersPage() {
@@ -19,6 +20,7 @@ export default async function AdminUsersPage() {
       where: { role: 'VISITOR', isAdminViewed: false },
       data: { isAdminViewed: true }
     });
+    revalidatePath('/admin');
   }
 
   return (

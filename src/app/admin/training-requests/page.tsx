@@ -1,5 +1,6 @@
 import { Activity, MessageCircle, Ruler, Scale, User, Calendar } from 'lucide-react';
 import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 import DeleteRequestButton from './DeleteRequestButton';
 import RequestActions from './RequestActions';
 
@@ -24,6 +25,15 @@ export default async function AdminTrainingRequestsPage() {
       createdAt: 'desc',
     },
   });
+
+  // Marca todas as solicitações como vistas ao carregar esta página
+  if (requests.some(r => !r.isAdminViewed)) {
+    await prisma.personalizedTrainingRequest.updateMany({
+      where: { isAdminViewed: false },
+      data: { isAdminViewed: true }
+    });
+    revalidatePath('/admin');
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

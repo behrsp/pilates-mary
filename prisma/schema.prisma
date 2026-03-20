@@ -111,6 +111,7 @@ model PersonalizedTrainingRequest {
   weight          Float
   physicalProblem String?
   status          RequestStatus @default(PENDING)
+  isAdminViewed    Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
