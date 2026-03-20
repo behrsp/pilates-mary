@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { LogOut, LayoutDashboard, Users, FileVideo, CalendarDays, Share2, Activity, Settings } from 'lucide-react';
 import { cookies } from 'next/headers';
 
+import prisma from '@/lib/prisma';
+import Badge from '@/app/admin/components/Badge';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
@@ -11,6 +14,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!session || session.role !== 'ADMIN') {
     redirect('/login');
   }
+
+  // Busca contagens para as notificações
+  const newStudentsCount = await prisma.user.count({
+    where: { 
+      role: 'VISITOR',
+      isAdminViewed: false
+    }
+  });
+
+  const pendingTrainingRequestsCount = await prisma.personalizedTrainingRequest.count({
+    where: { 
+      status: 'PENDING'
+    }
+  });
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex pb-16 md:pb-0">
@@ -27,9 +44,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <LayoutDashboard className="w-5 h-5" />
             Visão Geral
           </Link>
-          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all">
-            <Users className="w-5 h-5" />
-            Alunos
+          <Link href="/admin/users" className="flex items-center justify-between px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all group">
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5" />
+              Alunos
+            </div>
+            <Badge count={newStudentsCount} />
           </Link>
           <Link href="/admin/exercises" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all">
             <FileVideo className="w-5 h-5" />
@@ -39,9 +59,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <CalendarDays className="w-5 h-5" />
             Eventos
           </Link>
-          <Link href="/admin/training-requests" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all">
-            <Activity className="w-5 h-5" />
-            Treinamentos
+          <Link href="/admin/training-requests" className="flex items-center justify-between px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all group">
+            <div className="flex items-center gap-3">
+              <Activity className="w-5 h-5" />
+              Treinamentos
+            </div>
+            <Badge count={pendingTrainingRequestsCount} />
           </Link>
           <Link href="/admin/contacts" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all">
             <Share2 className="w-5 h-5" />
@@ -85,9 +108,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <LayoutDashboard className="w-5 h-5" />
           <span className="text-[10px] font-medium">Painel</span>
         </Link>
-        <Link href="/admin/users" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px]">
+        <Link href="/admin/users" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px] relative">
           <Users className="w-5 h-5" />
           <span className="text-[10px] font-medium">Alunos</span>
+          {newStudentsCount > 0 && (
+            <div className="absolute top-0 right-2">
+              <Badge count={newStudentsCount} className="border-2 border-zinc-950" />
+            </div>
+          )}
         </Link>
         <Link href="/admin/exercises" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px]">
           <FileVideo className="w-5 h-5" />
@@ -97,9 +125,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <CalendarDays className="w-5 h-5" />
           <span className="text-[10px] font-medium">Eventos</span>
         </Link>
-        <Link href="/admin/training-requests" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px]">
+        <Link href="/admin/training-requests" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px] relative">
           <Activity className="w-5 h-5" />
           <span className="text-[10px] font-medium">Treino</span>
+          {pendingTrainingRequestsCount > 0 && (
+            <div className="absolute top-0 right-2">
+              <Badge count={pendingTrainingRequestsCount} className="border-2 border-zinc-950" />
+            </div>
+          )}
         </Link>
       </nav>
 

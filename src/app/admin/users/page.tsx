@@ -13,6 +13,14 @@ export default async function AdminUsersPage() {
     orderBy: { createdAt: 'desc' }
   });
 
+  // Marca todos os alunos como vistos pela administradora ao carregar esta página
+  if (users.some(u => !u.isAdminViewed)) {
+    await prisma.user.updateMany({
+      where: { role: 'VISITOR', isAdminViewed: false },
+      data: { isAdminViewed: true }
+    });
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
