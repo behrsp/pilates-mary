@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import DeleteRequestButton from './DeleteRequestButton';
 import RequestActions from './RequestActions';
+import NotificationManager from '../components/NotificationManager';
 
 export default async function AdminTrainingRequestsPage() {
   const requests = await prisma.personalizedTrainingRequest.findMany({
@@ -26,17 +27,9 @@ export default async function AdminTrainingRequestsPage() {
     },
   });
 
-  // Marca todas as solicitações como vistas ao carregar esta página
-  if (requests.some(r => !r.isAdminViewed)) {
-    await prisma.personalizedTrainingRequest.updateMany({
-      where: { isAdminViewed: false },
-      data: { isAdminViewed: true }
-    });
-    revalidatePath('/admin');
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      <NotificationManager type="training" />
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
@@ -55,7 +48,7 @@ export default async function AdminTrainingRequestsPage() {
         </div>
       ) : (
         <div className="grid gap-6 mt-8">
-          {requests.map((request) => {
+          {requests.map((request: any) => {
             const phoneNumber = request.user?.phone?.replace(/\D/g, '');
             const message = encodeURIComponent(`Olá ${request.fullName}, sou a instrutora Mary. Recebi sua solicitação de Treinamento VIP. Podemos agendar uma avaliação?`);
             const whatsappLink = phoneNumber ? `https://wa.me/55${phoneNumber}?text=${message}` : '#';

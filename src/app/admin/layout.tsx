@@ -3,11 +3,13 @@ import { getSession } from '@/lib/session';
 import Link from 'next/link';
 import { LogOut, LayoutDashboard, Users, FileVideo, CalendarDays, Share2, Activity, Settings } from 'lucide-react';
 import { cookies } from 'next/headers';
+import { unstable_noStore as noStore } from 'next/cache';
 
 import prisma from '@/lib/prisma';
 import Badge from '@/app/admin/components/Badge';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  noStore();
   const session = await getSession();
 
   // Middleware já protege isso, mas é uma dupla checagem.

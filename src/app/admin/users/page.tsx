@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import UserRow from './UserRow';
+import NotificationManager from '../components/NotificationManager';
 
 export default async function AdminUsersPage() {
   const session = await getSession();
@@ -14,17 +15,9 @@ export default async function AdminUsersPage() {
     orderBy: { createdAt: 'desc' }
   });
 
-  // Marca todos os alunos como vistos pela administradora ao carregar esta página
-  if (users.some(u => !u.isAdminViewed)) {
-    await prisma.user.updateMany({
-      where: { role: 'VISITOR', isAdminViewed: false },
-      data: { isAdminViewed: true }
-    });
-    revalidatePath('/admin');
-  }
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      <NotificationManager type="users" />
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
@@ -57,7 +50,7 @@ export default async function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
-                {users.map((user) => (
+                {users.map((user: any) => (
                   <UserRow key={user.id} user={user} />
                 ))}
               </tbody>
