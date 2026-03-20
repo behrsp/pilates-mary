@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
 import Link from 'next/link';
-import { LogOut, Home, PlayCircle, Calendar, MessageCircle, User } from 'lucide-react';
+import { LogOut, Home, PlayCircle, Calendar, MessageCircle, User, Info } from 'lucide-react';
 import { cookies } from 'next/headers';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -43,6 +43,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Link href="/dashboard/contact" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all">
             <MessageCircle className="w-5 h-5" />
             Contato
+          </Link>
+          <Link href="/dashboard/about" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30 transition-all">
+            <Info className="w-5 h-5" />
+            Sobre
           </Link>
         </nav>
 
@@ -93,6 +97,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Link href="/dashboard/training" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200">
           <User className="w-6 h-6" />
           <span className="text-[10px] font-medium">Perfil</span>
+        </Link>
+        <Link href="/dashboard/about" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200">
+          <Info className="w-6 h-6" />
+          <span className="text-[10px] font-medium">Sobre</span>
         </Link>
       </nav>
 

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
 import Link from 'next/link';
-import { LogOut, LayoutDashboard, Users, FileVideo, CalendarDays, Share2, Activity, Settings } from 'lucide-react';
+import { LogOut, LayoutDashboard, Users, FileVideo, CalendarDays, Share2, Activity, Settings, Info } from 'lucide-react';
 import { cookies } from 'next/headers';
 import { unstable_noStore as noStore } from 'next/cache';
 
@@ -72,6 +72,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Share2 className="w-5 h-5" />
             Contatos / Redes
           </Link>
+          <Link href="/admin/about" className="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-indigo-900/20 transition-all">
+            <Info className="w-5 h-5" />
+            Sobre Mim
+          </Link>
         </nav>
 
         <div className="mt-auto pt-6 border-t border-indigo-900/30">
@@ -135,6 +139,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Badge count={pendingTrainingRequestsCount} className="border-2 border-zinc-950" />
             </div>
           )}
+        </Link>
+        <Link href="/admin/about" className="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 min-w-[60px]">
+          <Info className="w-5 h-5" />
+          <span className="text-[10px] font-medium">Sobre</span>
         </Link>
       </nav>
 

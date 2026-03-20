@@ -149,6 +149,13 @@ enum RequestStatus {
   REJECTED
 }
 
+model About {
+  id        String   @id @default(uuid())
+  bio       String
+  imageUrl  String?
+  updatedAt DateTime @updatedAt
+}
+
 
 datasource db {
   provider = "postgresql"
