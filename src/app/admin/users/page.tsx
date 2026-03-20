@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 import UserRow from './UserRow';
 import NotificationManager from '../components/NotificationManager';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminUsersPage() {
   const session = await getSession();
   if (!session || session.role !== 'ADMIN') redirect('/login');
