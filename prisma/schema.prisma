@@ -155,6 +155,32 @@ model About {
   imageUrl  String?
   updatedAt DateTime @updatedAt
 }
+model SocialProject {
+  id          String               @id @default(uuid())
+  title       String
+  description String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  images      SocialProjectImage[]
+}
+
+model SocialProjectImage {
+  id          String        @id @default(uuid())
+  url         String
+  description String?
+  projectId   String
+  project     SocialProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+}
+
+model SocialBeneficiary {
+  id        String   @id @default(uuid())
+  name      String
+  contact   String   // CNPJ or Phone
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 
 datasource db {
