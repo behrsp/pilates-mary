@@ -15,9 +15,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pilates Mary",
   description: "Pilates Mary - Sistema de Treinamento e Projetos Sociais",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   manifest: "/manifest.json",
   icons: {
-    apple: "/icon-192.png",
+    icon: "/app-logo-192.png",
+    shortcut: "/app-logo-192.png",
+    apple: "/app-logo-192.png",
   },
 };
 
